@@ -20,7 +20,7 @@ def obter_caso_nao_repetido(casos_usados):
         if caso["id"] not in casos_usados
     ]
 
-    # Reinicia se todos os casos já foram usados
+    # Reinicia quando todos os casos forem usados
     if not casos_disponiveis:
 
         casos_usados.clear()
