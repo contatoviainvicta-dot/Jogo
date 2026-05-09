@@ -20,7 +20,6 @@ def obter_caso_nao_repetido(casos_usados):
         if caso["id"] not in casos_usados
     ]
 
-    # Reinicia quando todos os casos forem usados
     if not casos_disponiveis:
 
         casos_usados.clear()
@@ -37,3 +36,15 @@ def embaralhar_diagnostico(diagnostico):
     random.shuffle(letras)
 
     return letras
+
+
+def obter_cor_raridade(raridade):
+
+    cores = {
+        "Comum": "🟢",
+        "Raro": "🔵",
+        "Épico": "🟣",
+        "Lendário": "🟠"
+    }
+
+    return cores.get(raridade, "⚪")
