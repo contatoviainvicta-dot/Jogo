@@ -21,7 +21,10 @@ def inicializar_estado():
 
 def validar_resposta(resposta_usuario, resposta_correta):
 
-    return resposta_usuario.strip().upper() == resposta_correta.upper()
+    return (
+        resposta_usuario.strip().upper()
+        == resposta_correta.upper()
+    )
 
 
 def adicionar_pontos(pontos=10):
