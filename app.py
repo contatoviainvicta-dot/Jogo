@@ -1,22 +1,17 @@
 import streamlit as st
 
-from database import (
-    obter_caso_nao_repetido,
-    embaralhar_diagnostico,
-    obter_cor_raridade
-)
+from database import obter_caso_nao_repetido
+from database import embaralhar_diagnostico
+from database import obter_cor_raridade
 
-from game_logic import (
-    inicializar_estado,
-    validar_resposta,
-    adicionar_pontos,
-    remover_vida,
-    adicionar_streak,
-    resetar_streak,
-    reiniciar_timer,
-    tempo_restante
-)
-
+from game_logic import inicializar_estado
+from game_logic import validar_resposta
+from game_logic import adicionar_pontos
+from game_logic import remover_vida
+from game_logic import adicionar_streak
+from game_logic import resetar_streak
+from game_logic import reiniciar_timer
+from game_logic import tempo_restante
 
 # ==========================================
 # CONFIG
