@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "descricao": "Homem, 58 anos, dor torácica em aperto com sudorese fria.",
+    "diagnostico": "INFARTO",
+    "especialidade": "Cardiologia",
+    "dificuldade": 1,
+    "explicacao": "IAM geralmente apresenta dor torácica típica e sintomas autonômicos."
+  },
+  {
+    "id": 2,
+    "descricao": "Paciente com febre, tosse produtiva e crepitações pulmonares.",
+    "diagnostico": "PNEUMONIA",
+    "especialidade": "Pneumologia",
+    "dificuldade": 1,
+    "explicacao": "Pneumonia bacteriana frequentemente cursa com febre e sintomas respiratórios."
+  },
+  {
+    "id": 3,
+    "descricao": "Paciente jovem com sibilância e melhora após broncodilatador.",
+    "diagnostico": "ASMA",
+    "especialidade": "Pneumologia",
+    "dificuldade": 1,
+    "explicacao": "Asma cursa com broncoespasmo reversível."
+  }
+]
