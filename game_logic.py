@@ -1,22 +1,24 @@
 import streamlit as st
+import time
 
 
 def inicializar_estado():
 
-    if "score" not in st.session_state:
-        st.session_state.score = 0
+    valores_iniciais = {
+        "score": 0,
+        "high_score": 0,
+        "casos_usados": [],
+        "respondido": False,
+        "streak": 0,
+        "vidas": 3,
+        "dica_usada": False,
+        "tempo_inicio": time.time()
+    }
 
-    if "casos_usados" not in st.session_state:
-        st.session_state.casos_usados = []
+    for chave, valor in valores_iniciais.items():
 
-    if "respondido" not in st.session_state:
-        st.session_state.respondido = False
-
-    if "streak" not in st.session_state:
-        st.session_state.streak = 0
-
-    if "vidas" not in st.session_state:
-        st.session_state.vidas = 3
+        if chave not in st.session_state:
+            st.session_state[chave] = valor
 
 
 def validar_resposta(resposta_usuario, resposta_correta):
@@ -30,6 +32,9 @@ def validar_resposta(resposta_usuario, resposta_correta):
 def adicionar_pontos(pontos=10):
 
     st.session_state.score += pontos
+
+    if st.session_state.score > st.session_state.high_score:
+        st.session_state.high_score = st.session_state.score
 
 
 def remover_vida():
@@ -45,3 +50,17 @@ def adicionar_streak():
 def resetar_streak():
 
     st.session_state.streak = 0
+
+
+def reiniciar_timer():
+
+    st.session_state.tempo_inicio = time.time()
+
+
+def tempo_restante(limite=20):
+
+    tempo_passado = time.time() - st.session_state.tempo_inicio
+
+    restante = int(limite - tempo_passado)
+
+    return max(restante, 0)
