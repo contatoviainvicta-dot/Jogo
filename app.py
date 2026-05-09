@@ -1,10 +1,24 @@
 import streamlit as st
-import random
 
-from database import obter_caso_aleatorio
+from database import (
+    obter_caso_nao_repetido,
+    embaralhar_diagnostico
+)
+
+from game_logic import (
+    inicializar_estado,
+    validar_resposta,
+    adicionar_pontos,
+    remover_vida,
+    adicionar_streak,
+    resetar_streak
+)
 
 
+# ==========================================
 # CONFIGURAÇÃO DA PÁGINA
+# ==========================================
+
 st.set_page_config(
     page_title="Plantão Word",
     page_icon="🩺",
@@ -12,67 +26,183 @@ st.set_page_config(
 )
 
 
-# SCORE
-if "score" not in st.session_state:
-    st.session_state.score = 0
+# ==========================================
+# ESTADO INICIAL
+# ==========================================
+
+inicializar_estado()
 
 
-# CASO ATUAL
+# ==========================================
+# FUNÇÃO NOVO CASO
+# ==========================================
+
+def carregar_novo_caso():
+
+    caso = obter_caso_nao_repetido(
+        st.session_state.casos_usados
+    )
+
+    st.session_state.caso = caso
+
+    st.session_state.casos_usados.append(caso["id"])
+
+    st.session_state.letras = embaralhar_diagnostico(
+        caso["diagnostico"]
+    )
+
+    st.session_state.respondido = False
+
+
+# ==========================================
+# PRIMEIRO CASO
+# ==========================================
+
 if "caso" not in st.session_state:
-    st.session_state.caso = obter_caso_aleatorio()
+    carregar_novo_caso()
 
 
 caso = st.session_state.caso
 
 
-# TÍTULO
+# ==========================================
+# HEADER
+# ==========================================
+
 st.title("🩺 Plantão Word")
 
-st.subheader("Descubra o diagnóstico")
+st.caption("Diagnostique. Aprenda. Evolua.")
 
 
-# MOSTRAR CASO
-st.write(caso["descricao"])
+# ==========================================
+# STATUS PLAYER
+# ==========================================
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric("🏆 Pontos", st.session_state.score)
+
+with col2:
+    st.metric("🔥 Streak", st.session_state.streak)
+
+with col3:
+    st.metric("❤️ Vidas", st.session_state.vidas)
 
 
-# EMBARALHAR LETRAS
-letras = list(caso["diagnostico"])
-random.shuffle(letras)
+# ==========================================
+# BARRA DE PROGRESSO
+# ==========================================
 
-st.write("🔤 Letras:")
-st.write(" ".join(letras))
+progresso = len(st.session_state.casos_usados) / 10
+
+if progresso > 1:
+    progresso = 1.0
+
+st.progress(progresso)
 
 
+# ==========================================
+# CARD DO CASO
+# ==========================================
+
+st.divider()
+
+st.subheader("📋 Caso Clínico")
+
+st.info(caso["descricao"])
+
+st.write(f"🩺 Especialidade: **{caso['especialidade']}**")
+
+st.write(f"⭐ Dificuldade: {caso['dificuldade']}")
+
+
+# ==========================================
+# LETRAS
+# ==========================================
+
+st.subheader("🔤 Letras")
+
+st.write(" ".join(st.session_state.letras))
+
+
+# ==========================================
 # INPUT
-resposta = st.text_input("Qual o diagnóstico?")
+# ==========================================
+
+resposta = st.text_input(
+    "Qual o diagnóstico?"
+)
 
 
+# ==========================================
 # BOTÃO RESPONDER
-if st.button("Responder"):
+# ==========================================
 
-    if resposta.strip().upper() == caso["diagnostico"]:
+if st.button("Responder") and not st.session_state.respondido:
+
+    st.session_state.respondido = True
+
+    correto = validar_resposta(
+        resposta,
+        caso["diagnostico"]
+    )
+
+    if correto:
 
         st.success("✅ Diagnóstico correto!")
 
-        st.session_state.score += 10
+        st.balloons()
+
+        adicionar_pontos(10)
+
+        adicionar_streak()
 
     else:
 
         st.error(
-            f"❌ Resposta incorreta! Diagnóstico correto: {caso['diagnostico']}"
+            f"❌ Resposta incorreta! "
+            f"Diagnóstico: {caso['diagnostico']}"
         )
 
+        remover_vida()
+
+        resetar_streak()
+
     # EXPLICAÇÃO
-    st.info(caso["explicacao"])
+    st.subheader("📚 Explicação")
+
+    st.write(caso["explicacao"])
 
 
-# PONTUAÇÃO
-st.write(f"🏆 Pontuação: {st.session_state.score}")
+# ==========================================
+# GAME OVER
+# ==========================================
+
+if st.session_state.vidas <= 0:
+
+    st.error("💀 GAME OVER")
+
+    st.write(
+        f"Pontuação final: "
+        f"{st.session_state.score}"
+    )
+
+    if st.button("Jogar Novamente"):
+
+        st.session_state.clear()
+
+        st.rerun()
 
 
-# BOTÃO PRÓXIMO CASO
-if st.button("Próximo Caso"):
+# ==========================================
+# PRÓXIMO CASO
+# ==========================================
 
-    st.session_state.caso = obter_caso_aleatorio()
+elif st.session_state.respondido:
 
-    st.rerun()
+    if st.button("➡️ Próximo Caso"):
+
+        carregar_novo_caso()
+
+        st.rerun()
