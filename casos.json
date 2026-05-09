@@ -1,11 +1,13 @@
 [
   {
     "id": 1,
-    "descricao": "Homem, 58 anos, dor torácica em aperto com sudorese fria e irradiação para braço esquerdo.",
+    "descricao": "Homem, 58 anos, dor torácica em aperto com sudorese fria.",
     "diagnostico": "INFARTO",
     "especialidade": "Cardiologia",
     "dificuldade": 1,
-    "explicacao": "Infarto agudo do miocárdio geralmente cursa com dor torácica típica e sintomas autonômicos."
+    "raridade": "Comum",
+    "dica": "Troponina elevada",
+    "explicacao": "IAM geralmente apresenta dor torácica típica e sintomas autonômicos."
   },
   {
     "id": 2,
@@ -13,15 +15,19 @@
     "diagnostico": "PNEUMONIA",
     "especialidade": "Pneumologia",
     "dificuldade": 1,
+    "raridade": "Comum",
+    "dica": "Consolidação pulmonar",
     "explicacao": "Pneumonia bacteriana frequentemente apresenta febre e sintomas respiratórios."
   },
   {
     "id": 3,
-    "descricao": "Paciente jovem com sibilância, dispneia e melhora após broncodilatador.",
+    "descricao": "Paciente jovem com sibilância e melhora após broncodilatador.",
     "diagnostico": "ASMA",
     "especialidade": "Pneumologia",
     "dificuldade": 1,
-    "explicacao": "Asma cursa com broncoespasmo reversível e episódios recorrentes."
+    "raridade": "Comum",
+    "dica": "Broncoespasmo reversível",
+    "explicacao": "Asma cursa com broncoespasmo reversível."
   },
   {
     "id": 4,
@@ -29,6 +35,8 @@
     "diagnostico": "MENINGITE",
     "especialidade": "Neurologia",
     "dificuldade": 2,
+    "raridade": "Raro",
+    "dica": "Síndrome meníngea",
     "explicacao": "Meningite frequentemente apresenta síndrome meníngea clássica."
   },
   {
@@ -37,6 +45,8 @@
     "diagnostico": "DIABETES",
     "especialidade": "Endocrinologia",
     "dificuldade": 1,
+    "raridade": "Comum",
+    "dica": "Hiperglicemia",
     "explicacao": "Hiperglicemia pode causar sintomas osmóticos clássicos."
   },
   {
@@ -45,6 +55,8 @@
     "diagnostico": "ICC",
     "especialidade": "Cardiologia",
     "dificuldade": 2,
+    "raridade": "Épico",
+    "dica": "Congestão pulmonar",
     "explicacao": "Insuficiência cardíaca congestiva pode causar congestão pulmonar e periférica."
   }
 ]
