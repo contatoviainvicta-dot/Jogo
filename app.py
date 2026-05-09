@@ -2,7 +2,8 @@ import streamlit as st
 
 from database import (
     obter_caso_nao_repetido,
-    embaralhar_diagnostico
+    embaralhar_diagnostico,
+    obter_cor_raridade
 )
 
 from game_logic import (
@@ -11,12 +12,14 @@ from game_logic import (
     adicionar_pontos,
     remover_vida,
     adicionar_streak,
-    resetar_streak
+    resetar_streak,
+    reiniciar_timer,
+    tempo_restante
 )
 
 
 # ==========================================
-# CONFIGURAÇÃO DA PÁGINA
+# CONFIG
 # ==========================================
 
 st.set_page_config(
@@ -25,16 +28,11 @@ st.set_page_config(
     layout="centered"
 )
 
-
-# ==========================================
-# ESTADO INICIAL
-# ==========================================
-
 inicializar_estado()
 
 
 # ==========================================
-# FUNÇÃO NOVO CASO
+# NOVO CASO
 # ==========================================
 
 def carregar_novo_caso():
@@ -53,10 +51,10 @@ def carregar_novo_caso():
 
     st.session_state.respondido = False
 
+    st.session_state.dica_usada = False
 
-# ==========================================
-# PRIMEIRO CASO
-# ==========================================
+    reiniciar_timer()
+
 
 if "caso" not in st.session_state:
     carregar_novo_caso()
@@ -75,10 +73,10 @@ st.caption("Diagnostique. Aprenda. Evolua.")
 
 
 # ==========================================
-# STATUS PLAYER
+# STATUS
 # ==========================================
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric("🏆 Pontos", st.session_state.score)
@@ -89,12 +87,34 @@ with col2:
 with col3:
     st.metric("❤️ Vidas", st.session_state.vidas)
 
+with col4:
+    st.metric("👑 Recorde", st.session_state.high_score)
+
 
 # ==========================================
-# BARRA DE PROGRESSO
+# TIMER
 # ==========================================
 
-progresso = len(st.session_state.casos_usados) / 10
+tempo = tempo_restante()
+
+st.metric("⏱️ Tempo", f"{tempo}s")
+
+if tempo <= 0 and not st.session_state.respondido:
+
+    st.warning("⏰ Tempo esgotado!")
+
+    remover_vida()
+
+    resetar_streak()
+
+    st.session_state.respondido = True
+
+
+# ==========================================
+# PROGRESSO
+# ==========================================
+
+progresso = len(st.session_state.casos_usados) / 15
 
 if progresso > 1:
     progresso = 1.0
@@ -103,12 +123,16 @@ st.progress(progresso)
 
 
 # ==========================================
-# CARD DO CASO
+# CASO
 # ==========================================
 
 st.divider()
 
-st.subheader("📋 Caso Clínico")
+raridade = caso.get("raridade", "Comum")
+
+icone = obter_cor_raridade(raridade)
+
+st.subheader(f"{icone} Caso {raridade}")
 
 st.info(caso["descricao"])
 
@@ -127,6 +151,27 @@ st.write(" ".join(st.session_state.letras))
 
 
 # ==========================================
+# DICA
+# ==========================================
+
+if not st.session_state.dica_usada:
+
+    if st.button("💡 Usar dica (-5 pontos)"):
+
+        st.session_state.score = max(
+            st.session_state.score - 5,
+            0
+        )
+
+        st.session_state.dica_usada = True
+
+
+if st.session_state.dica_usada:
+
+    st.info(f"💡 Dica: {caso['dica']}")
+
+
+# ==========================================
 # INPUT
 # ==========================================
 
@@ -136,7 +181,7 @@ resposta = st.text_input(
 
 
 # ==========================================
-# BOTÃO RESPONDER
+# RESPONDER
 # ==========================================
 
 if st.button("Responder") and not st.session_state.respondido:
@@ -161,15 +206,14 @@ if st.button("Responder") and not st.session_state.respondido:
     else:
 
         st.error(
-            f"❌ Resposta incorreta! "
-            f"Diagnóstico: {caso['diagnostico']}"
+            f"❌ Diagnóstico correto: "
+            f"{caso['diagnostico']}"
         )
 
         remover_vida()
 
         resetar_streak()
 
-    # EXPLICAÇÃO
     st.subheader("📚 Explicação")
 
     st.write(caso["explicacao"])
@@ -184,11 +228,16 @@ if st.session_state.vidas <= 0:
     st.error("💀 GAME OVER")
 
     st.write(
-        f"Pontuação final: "
+        f"🏆 Pontuação Final: "
         f"{st.session_state.score}"
     )
 
-    if st.button("Jogar Novamente"):
+    st.write(
+        f"👑 Melhor Pontuação: "
+        f"{st.session_state.high_score}"
+    )
+
+    if st.button("🔄 Jogar Novamente"):
 
         st.session_state.clear()
 
